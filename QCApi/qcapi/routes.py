@@ -20,6 +20,9 @@ async def test_route(request: TestRequest):
 async def read_item(settings: Settings = Depends(get_settings)):
     return {"test": settings.qc_dataset_bucket}
 
+@router.get("/health")
+async def health():
+    return {"status": "ok"}
 
 @router.post("/qc_metrics")
 async def qc_metrics(request: QCMetricsRequest):
