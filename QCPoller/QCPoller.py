@@ -36,14 +36,19 @@ def send_shutdown_request():
         print("Connection was closed by the server (expected behavior during shutdown).")
     except requests.RequestException as e:
         print(f"An error occurred: {e}")
-MAX_COUNT = 10800
+
+#timeout setting
+MAX_COUNT = 1000
 currentCount=0
+
+#polling loop
 while True:
     
     response = client.receive_message(QueueUrl=queue_url, MaxNumberOfMessages=10, WaitTimeSeconds=10, VisibilityTimeout=900)
     print("queueurl=",queue_url)
     print(response)
 
+    #timeout check
     if currentCount>= MAX_COUNT:
         print("Server has hit timeout, shutting down...")
         send_shutdown_request()
@@ -65,7 +70,7 @@ while True:
             project = queen_service_request["project"]
             user = queen_service_request["user"]
 
-            #preplot qc being parsed here
+            #preplot qc
             if request_type == "QCPrePlot":
                 
                 dataset = queen_service_request["dataset"]
@@ -77,6 +82,7 @@ while True:
                     "mt": species_mt
                 }            
                 print("Sending QC request...",qc_request)
+                #send pre-plot request to QCApi
                 response = send_request('/qc_pre_plot_endpoint', qc_request)
                 print(response)
                 if response['success']:
@@ -95,6 +101,8 @@ while True:
                     print(response)
                 else:
                     print(f"Error in QC: {response.get('message')}")
+
+            #doublet request
             elif request_type == "QCDoublet":
                 dataset = queen_service_request["dataset"]
                 countMax = queen_service_request["countMax"]
@@ -116,6 +124,7 @@ while True:
                     "mitoMin":mitoMin
                 }  
                 print("Sending QC request...",qc_request)
+                #send qc doublet request to qc doublet endpoint
                 response = send_request('/qc_doublet_endpoint', qc_request)
                 print(response)
                 if response['success']:
@@ -160,59 +169,9 @@ while True:
             #        print(response)
             #    else:
             #        print(f"Error in QC: {response.get('message')}")
-            elif request_type == "initializeProject":
-                print("Initializing annData object")
-                datasets = queen_service_request["datasets"]
-
-                response = send_request('/init_endpoint', {"user": user, "project": project, "datasets": datasets})
-                if response["success"]:
-                    print("Initializing Project Successful... Sending SNS message")
-                    project_initialized = True
-                    data = {
-                        "user": user, 
-                        "project": project, 
-                        "stage": "initialized"
-                    }
-                    response = send_sns(data)
-                    print(response)
-            elif request_type == "clustering":
-                print("Beginning clustering now...")
-                resolution = queen_service_request['resolution']
-
-                response = send_request('/clustering', {"user":user, "project":project, "resolution":resolution})
-                if response['success']:
-                    print("Clustering was successful...")
-                    data = {
-                        "user":user,
-                        "project":project,
-                        "geneNames": response["gene_names"],
-                        "clusters": response["clusters"],
-                        "stage":"cluster"
-                    }
-                    response = send_sns(data)
-                    print(response)
-            elif request_type == "annotations":
-                print("Beginning annotations now...")
-                anno = queen_service_request['annotations']
-                response = send_request("/annotations", {"user":user, "project":project, "annotations":anno})
-                if response['success']:
-                    print("Annotations happened successfully")
-                    data = {
-                        "user":user,
-                        "project":project,
-                        "stage":"annotations"
-                    }
-                
-                    response = send_sns(data)
-                    print(response)
-            elif request_type == "killServer":
-
-                print("Shutting down the R QC server...")
-                send_shutdown_request()
-                print("Shutting down the python handler")
-                exit(0)
 
         except Exception as e:
             print("Error:", e)
         finally:
+            #delete message once request is finished
             client.delete_message(QueueUrl=queue_url, ReceiptHandle=message['ReceiptHandle'])
