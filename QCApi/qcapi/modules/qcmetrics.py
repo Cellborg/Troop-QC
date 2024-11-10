@@ -36,16 +36,16 @@ async def load_dataset(
                 status_code=404, detail="No files found in the dataset bucket."
             )
 
-        # Prepare tasks for asynchronous downloads
         tasks = []
         for file in files:
-            print('File[Key]: ', file['Key'])
-            file_name = os.path.basename(file["Key"])
-            print('file_name: ', file_name)
+            current_key = file["Key"]  # Capture the current file's key in a local variable
+            file_name = os.path.basename(current_key)
             local_path = os.path.join(settings.workspace_path, file_name)
+            
+            # Append the task with captured current_key and its dependent values
             tasks.append(
                 download_file(
-                    s3_client, settings.dataset_bucket, file["Key"], local_path
+                    s3_client, settings.dataset_bucket, current_key, local_path
                 )
             )
 
