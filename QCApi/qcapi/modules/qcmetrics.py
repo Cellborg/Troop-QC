@@ -17,8 +17,8 @@ from botocore.exceptions import ClientError, BotoCoreError
 
 async def load_dataset(
     request: QCMetricsRequest,
-    s3_client: boto3_client = Depends(get_s3_client),
-    settings: Settings = Depends(get_settings),
+    s3_client: boto3_client = get_s3_client,
+    settings: Settings = get_settings,
 ):
     """Load dataset files from S3 and store them locally."""
     try:
