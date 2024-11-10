@@ -83,7 +83,7 @@ while True:
                 }            
                 print("Sending QC request...",qc_request)
                 #send pre-plot request to QCApi
-                response = send_request('/qc_pre_plot_endpoint', qc_request)
+                response = send_request('/qc_metrics', qc_request)
                 print(response)
                 if response['success']:
                     print("QC Pre-Plot Successful... Sending SNS message to clear dataset as completed...")
@@ -125,7 +125,7 @@ while True:
                 }  
                 print("Sending QC request...",qc_request)
                 #send qc doublet request to qc doublet endpoint
-                response = send_request('/qc_doublet_endpoint', qc_request)
+                response = send_request('/qc_doublets', qc_request)
                 print(response)
                 if response['success']:
                     print("QC Doublet Successful... Sending SNS message to clear dataset as completed...")
