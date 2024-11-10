@@ -39,7 +39,9 @@ async def load_dataset(
         # Prepare tasks for asynchronous downloads
         tasks = []
         for file in files:
+            print('File[Key]: ', file['Key'])
             file_name = os.path.basename(file["Key"])
+            print('file_name: ', file_name)
             local_path = os.path.join(settings.workspace_path, file_name)
             tasks.append(
                 download_file(
