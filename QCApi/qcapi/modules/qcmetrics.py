@@ -17,8 +17,8 @@ from botocore.exceptions import ClientError, BotoCoreError
 
 async def load_dataset(
     request: QCMetricsRequest,
-    s3_client: boto3_client = get_s3_client,
-    settings: Settings = get_settings,
+    s3_client: boto3_client,
+    settings: Settings,
 ):
     """Load dataset files from S3 and store them locally."""
     try:
@@ -108,7 +108,10 @@ def read_10x_mtx(workspace_path: str = Depends(lambda: get_settings().workspace_
 
 async def calculate_qc_metrics(request: QCMetricsRequest):
 
-    await load_dataset(request)
+    s3_client = get_s3_client()
+    settings = get_settings()
+
+    await load_dataset(request, s3_client, settings)
 
     adata = read_10x_mtx()
 
