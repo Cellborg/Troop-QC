@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     environment: str = Field("dev", env="ENVIRONMENT")
     dataset_bucket: str = ""
     qc_dataset_bucket: str = ""
-    workspace_path: str = "/tmp/workspace"  # Change from /tmp to avoid conflicts
+    workspace_path: str = "/tmp"  # Change from /tmp to avoid conflicts
 
     def initialize_buckets(self) -> None:
         """Set bucket names based on the environment, only called once."""
