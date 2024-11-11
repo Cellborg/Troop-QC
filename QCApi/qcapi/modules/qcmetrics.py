@@ -43,16 +43,17 @@ async def load_dataset(
             file_name = os.path.basename(file["Key"])
             print('file_name: ', file_name)
             local_path = os.path.join(settings.workspace_path, file_name)
-            tasks.append(
-                asyncio.create_task(
-                    download_file(
-                    s3_client, settings.dataset_bucket, file["Key"], local_path
-                )
-                )
-            )
+            s3_client.download_file(settings.dataset_bucket, file["Key"], local_path)
+            #tasks.append(
+            #    asyncio.create_task(
+            #        download_file(
+            #        s3_client, settings.dataset_bucket, file["Key"], local_path
+            #    )
+            #    )
+            #)
 
         # Execute downloads concurrently
-        await asyncio.gather(*tasks)
+        #await asyncio.gather(*tasks)
 
         print("All files downloaded successfully.")
         return True
