@@ -39,11 +39,8 @@ async def load_dataset(
         # Prepare tasks for asynchronous downloads
         tasks = []
         for file in files:
-            print('File[Key]: ', file['Key'])
             file_name = os.path.basename(file["Key"])
-            print('file_name: ', file_name)
             local_path = os.path.join(settings.workspace_path, file_name)
-            print("local path: ", local_path)
             #s3_client.download_file(settings.dataset_bucket, file["Key"], local_path)
             tasks.append(
                 asyncio.create_task(
@@ -78,7 +75,7 @@ async def load_dataset(
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-def read_10x_mtx(workspace_path: str = Depends(lambda: get_settings().workspace_path)):
+def read_10x_mtx(workspace_path: str):
     """ Read a 10X `.mtx` file using Scanpy and return the AnnData object. """
     try:
         print(f"Reading 10X `.mtx` file from: {workspace_path}")
@@ -119,7 +116,7 @@ async def calculate_qc_metrics(request: QCMetricsRequest):
 
     await load_dataset(request, s3_client, settings)
 
-    adata = read_10x_mtx()
+    adata = read_10x_mtx(settings.workspace_path)
 
     MIN_GENES = 200
     MIN_CELLS = 3
