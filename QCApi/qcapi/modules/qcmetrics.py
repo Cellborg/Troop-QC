@@ -43,6 +43,7 @@ async def load_dataset(
             file_name = os.path.basename(file["Key"])
             print('file_name: ', file_name)
             local_path = os.path.join(settings.workspace_path, file_name)
+            print("local path: ", local_path)
             s3_client.download_file(settings.dataset_bucket, file["Key"], local_path)
             #tasks.append(
             #    asyncio.create_task(
