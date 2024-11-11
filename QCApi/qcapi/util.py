@@ -1,6 +1,7 @@
 from fastapi import HTTPException, Depends
 from pydantic_settings import BaseSettings
 from pydantic import Field
+import os
 import boto3
 from functools import lru_cache
 import json
@@ -10,7 +11,8 @@ class Settings(BaseSettings):
     environment: str = Field("dev", env="ENVIRONMENT")
     dataset_bucket: str = ""
     qc_dataset_bucket: str = ""
-    workspace_path: str = "/tmp"  # Change from /tmp to avoid conflicts
+    os.makedirs("/tmp/workspace", exist_ok=True)
+    workspace_path: str = "/tmp/workspace"  # Change from /tmp to avoid conflicts
 
     def initialize_buckets(self) -> None:
         """Set bucket names based on the environment, only called once."""
