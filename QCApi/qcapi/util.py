@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from pydantic_settings import BaseSettings
 from pydantic import Field
 import os
@@ -42,8 +42,8 @@ def get_s3_client():
 async def upload_json_to_s3(
     data: str,
     s3_key: str,
-    s3_client: boto3.client = Depends(get_s3_client),
-    bucket: str = Depends(lambda: get_settings().qc_dataset_bucket),
+    s3_client: boto3.client,
+    bucket: str,
 ):
 
     try:

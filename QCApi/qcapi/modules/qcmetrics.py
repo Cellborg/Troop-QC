@@ -11,7 +11,7 @@ from ..util import (
     get_settings,
     upload_json_to_s3,
 )
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from botocore.exceptions import ClientError, BotoCoreError
 
 
@@ -158,4 +158,4 @@ async def calculate_qc_metrics(request: QCMetricsRequest):
 
     print(f"Uploading QC Metrics data to S3: {s3_plots_dir}")
 
-    await upload_json_to_s3(data_to_upload, s3_plots_dir)
+    await upload_json_to_s3(data_to_upload, s3_plots_dir, s3_client,settings.qc_dataset_bucket)
