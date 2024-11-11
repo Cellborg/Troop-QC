@@ -142,10 +142,10 @@ async def calculate_qc_metrics(request: QCMetricsRequest):
 
     GlobalCache.set_adata(adata)
 
-    data = adata.obs[["n_genes", "total_counts", "pct_counts_mt"]]
+    data = adata.obs[["n_genes_by_counts", "total_counts", "pct_counts_mt"]]
     data_to_upload = {
         index: {
-            "n_genes": row["n_genes"],
+            "n_genes": row["n_genes_by_counts"],
             "total_counts": row["total_counts"],
             "pct_counts_mt": row["pct_counts_mt"],
         }
