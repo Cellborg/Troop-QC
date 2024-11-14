@@ -25,6 +25,7 @@ setuptools = "68.2.2"
 uvicorn = {extras = ["standard"], version = "^0.32.0"}
 httpx = "^0.27.2"
 pydantic-settings = "^2.6.0"
+cmake = "^3.31.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
