@@ -8,9 +8,10 @@ COPY pyproject.toml poetry.lock /app/
 RUN python -m pip install --upgrade pip
 RUN pip install poetry==1.7.0
 RUN poetry install --no-dev
-RUN poetry build
 
 COPY ./qcapi /app/qcapi
+
+RUN poetry build
 
 EXPOSE 8001
 
