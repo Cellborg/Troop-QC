@@ -1,8 +1,10 @@
 FROM python:3.10
 
 WORKDIR /app
+RUN touch /app/README.md
 
 COPY pyproject.toml poetry.lock /app/
+
 RUN python -m pip install --upgrade pip
 RUN pip install poetry==1.7.0
 RUN poetry install --no-dev
